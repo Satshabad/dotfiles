@@ -52,8 +52,6 @@ alias gvim="gvim --remote-tab"
 alias e="vim ."
 bindkey "^R" history-incremental-search-backward
 
-if [ "$TMUX" = "" ]; then tmux; fi
-
 export WORKON_HOME=~/envs
 
 source /usr/local/bin/virtualenvwrapper.sh
