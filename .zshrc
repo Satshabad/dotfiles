@@ -48,7 +48,6 @@ alias p="grep -l  "http://xyzzx.com/" * | xargs rm"
 . ~/z.sh
 
 set -o vi
-alias gvim="gvim --remote-tab"
 alias e="vim ."
 bindkey "^R" history-incremental-search-backward
 
