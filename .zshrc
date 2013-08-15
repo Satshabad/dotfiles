@@ -53,5 +53,5 @@ bindkey "^R" history-incremental-search-backward
 
 export WORKON_HOME=~/envs
 
-source /usr/local/bin/virtualenvwrapper.sh
 alias vimrc="vi ~/.vimrc"
+alias vssh="vagrant ssh"
