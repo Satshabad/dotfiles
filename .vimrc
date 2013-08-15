@@ -250,6 +250,7 @@ let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+"
 " for ctrlp fuzzy search
 let g:ctrlp_map = '<c-f>'
 let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_extensions = ['tag']
 
 
 
@@ -271,4 +272,4 @@ set laststatus=2
 let g:airline_theme='dark'
 let g:airline_left_sep = '▶'
 let g:airline_right_sep = '◀'
-let g:airline_fugitive_prefix = '⎇ '
+let g:airline_branch_prefix = '⎇ '
