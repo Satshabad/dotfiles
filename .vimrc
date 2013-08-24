@@ -1,19 +1,16 @@
 call pathogen#infect()
 
-
-" for region
-map <C-e> <Plug>(expand_region_expand)
-map <C-x> <Plug>(expand_region_shrink)
-
 if !exists("autocommands_loaded")
   let autocommands_loaded = 1
   autocmd bufread,BufNewFile,FileReadPost *.txt set spell
 endif
 
-set clipboard=unnamedplus
-" better indent
+" set spell in commit messages
+au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
 
-set noswapfile 
+set clipboard=unnamedplus
+
+" better indent
 set smartindent
 set autoindent
 
@@ -27,9 +24,6 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
-
-" js files should only use 2 space for tabs
-autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 
 " searching using only lowercase ignores case
 set ignorecase
@@ -68,16 +62,13 @@ nmap vi<c-j> vip
 nmap va<c-j> vap
 
 
-" Auto complete stuff http://vim.wikia.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
 filetype plugin on
 
+" to select autocomplete results
 inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
 inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
-
-
-
-" to yank line
+" to yank to end of line
 map Y y$
 
 set scrolloff=8 
@@ -122,9 +113,8 @@ map s ys
 nnoremap c "cc
 vnoremap c "cc
 
-
-
-set directory^=$HOME/.vim_swap//   "put all swap files together in one place
+set backup
+set swapfile
 
 "for gitgutter
 highlight clear SignColumn
@@ -241,9 +231,14 @@ endfunction
 " }}}
 " }}}
 
-let g:slime_target = "tmux"
-
 nnoremap <F5> :GundoToggle<CR>
+
+" Autoformatjs stuff
+nnoremap <F6> :Tab/: <CR>
+autocmd FileType javascript noremap <buffer> \fk :call JsBeautify() <cr>
+nnoremap \fg :%g/"\([^\\"]\\|\\\(u\x\{4}\\|["trf\\bn\/]\)\)*"/:Tab/: <cr>
+nmap \fj \fk\fg``<cr>
+
 
 let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+" 
 
@@ -251,8 +246,6 @@ let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+"
 let g:ctrlp_map = '<c-f>'
 let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_extensions = ['tag']
-
-
 
 function! CreateTestString()
 
