@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/satshabad/Projects/Queue/api/salt'
+let g:netrw_dirhist_2='/home/satshabad/Projects/Queue/api/salt/roots'
+let g:netrw_dirhist_3='/home/satshabad/Projects/Queue/api/salt/roots/salt'
+let g:netrw_dirhist_4='/home/satshabad/Projects/Queue/api/salt/roots/salt/webserver'
+let g:netrw_dirhist_5='/home/satshabad/Projects/Queue/website'
+let g:netrw_dirhist_6='/home/satshabad/Projects/Queue/website/app'
+let g:netrw_dirhist_7='/home/satshabad/Projects/Queue/website/app/js'
+let g:netrw_dirhist_8='/home/satshabad/Projects/Queue/website/app/js/services'

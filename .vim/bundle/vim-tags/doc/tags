@@ -1,0 +1,9 @@
+'vim_tags_auto_generate'	vim-tags.txt	/*'vim_tags_auto_generate'*
+'vim_tags_gems_tags_command'	vim-tags.txt	/*'vim_tags_gems_tags_command'*
+'vim_tags_project_tags_command'	vim-tags.txt	/*'vim_tags_project_tags_command'*
+vim-tags	vim-tags.txt	/*vim-tags*
+vim-tags-about	vim-tags.txt	/*vim-tags-about*
+vim-tags-author-license	vim-tags.txt	/*vim-tags-author-license*
+vim-tags-configuration	vim-tags.txt	/*vim-tags-configuration*
+vim-tags-usage	vim-tags.txt	/*vim-tags-usage*
+vim-tags.txt	vim-tags.txt	/*vim-tags.txt*
