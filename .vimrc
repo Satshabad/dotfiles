@@ -1,5 +1,47 @@
 call pathogen#infect()
 
+set nocompatible               " be iMproved
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+
+" My Bundles here:
+"
+" original repos on github
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-unimpaired'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-commentary'
+Bundle 'bling/vim-airline'
+Bundle 'rking/ag.vim'
+Bundle 'MarcWeber/vim-addon-mw-utils'
+Bundle 'tomtom/tlib_vim'
+Bundle 'godlygeek/tabular'
+Bundle 'terryma/vim-multiple-cursors'
+Bundle 'ervandew/supertab'
+Bundle 'sjl/gundo.vim'
+Bundle 'kien/ctrlp.vim'
+Bundle 'garbas/vim-snipmate'
+Bundle 'hynek/vim-python-pep8-indent'
+Bundle 'maksimr/vim-jsbeautify'
+Bundle 'airblade/vim-gitgutter'
+Bundle 'Floobits/floobits-vim'
+Bundle 'Townk/vim-autoclose'
+Bundle 'majutsushi/tagbar'
+
+" vim-scripts repos
+Bundle 'YankRing.vim'
+Bundle 'vim-tags'
+
+filetype plugin indent on     " required!
+"
+
 if !exists("autocommands_loaded")
   let autocommands_loaded = 1
   autocmd bufread,BufNewFile,FileReadPost *.txt set spell
@@ -232,6 +274,7 @@ endfunction
 " }}}
 
 nnoremap <F6> :GundoToggle<CR>
+nmap <F8> :TagbarToggle<CR>
 
 " Autoformatjs stuff
 nnoremap <F6> :Tab/: <CR>
@@ -239,6 +282,8 @@ autocmd FileType javascript noremap <buffer> \fk :call JsBeautify() <cr>
 nnoremap \fg :%g/"\([^\\"]\\|\\\(u\x\{4}\\|["trf\\bn\/]\)\)*"/:Tab/: <cr>
 nmap \fj \fk\fg``<cr>
 
+" if html ignore json stuff
+autocmd FileType html noremap <buffer> \fj :call HtmlBeautify()<cr>
 
 let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+" 
 
@@ -246,7 +291,7 @@ let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+"
 let g:ctrlp_map = '<c-f>'
 let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_extensions = ['tag']
-
+let g:ctrlp_working_path_mode = "rc"
 function! CreateTestString()
 
     normal ma
