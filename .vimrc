@@ -38,6 +38,7 @@ Bundle 'majutsushi/tagbar'
 " vim-scripts repos
 Bundle 'YankRing.vim'
 Bundle 'vim-tags'
+Bundle 'pep8'
 
 filetype plugin indent on     " required!
 "
@@ -273,7 +274,7 @@ endfunction
 " }}}
 " }}}
 
-nnoremap <F6> :GundoToggle<CR>
+nnoremap <F7> :GundoToggle<CR>
 nmap <F8> :TagbarToggle<CR>
 
 " Autoformatjs stuff
