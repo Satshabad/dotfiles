@@ -1,5 +1,3 @@
-call pathogen#infect()
-
 set nocompatible               " be iMproved
 filetype off                   " required!
 
@@ -7,33 +5,63 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
+Bundle 'chrisbra/NrrwRgn'
+vnoremap <leader>n :NarrowRegion<cr>
 
-" My Bundles here:
-"
-" original repos on github
+Bundle 'nvie/vim-flake8'
+autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
+Bundle 'bitc/vim-bad-whitespace'
+
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-unimpaired'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-commentary'
+
 Bundle 'bling/vim-airline'
+set laststatus=2
+let g:airline_theme='dark'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '◀'
+let g:airline_branch_prefix = '⎇ '
+let g:airline_section_y = ""
+let g:airline_section_x = ""
+
 Bundle 'rking/ag.vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
 Bundle 'godlygeek/tabular'
 Bundle 'terryma/vim-multiple-cursors'
 Bundle 'ervandew/supertab'
+
 Bundle 'sjl/gundo.vim'
+nnoremap <F7> :GundoToggle<CR>
+
 Bundle 'kien/ctrlp.vim'
+let g:ctrlp_map = '<c-f>'
+let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_extensions = ['tag']
+let g:ctrlp_working_path_mode = "rc"
+
 Bundle 'garbas/vim-snipmate'
 Bundle 'hynek/vim-python-pep8-indent'
+
 Bundle 'maksimr/vim-jsbeautify'
+nnoremap <F6> :Tab/: <CR>
+autocmd FileType javascript noremap <buffer> \fk :call JsBeautify() <cr>
+nnoremap \fg :%g/"\([^\\"]\\|\\\(u\x\{4}\\|["trf\\bn\/]\)\)*"/:Tab/: <cr>
+nmap \fj \fk\fg``<cr>
+autocmd FileType html noremap <buffer> \fj :call HtmlBeautify()<cr>
+
 Bundle 'airblade/vim-gitgutter'
+
 Bundle 'Floobits/floobits-vim'
 Bundle 'Townk/vim-autoclose'
+
 Bundle 'majutsushi/tagbar'
+nnoremap <F5> :Tagbar<CR>
 
 " vim-scripts repos
 Bundle 'YankRing.vim'
@@ -41,12 +69,7 @@ Bundle 'vim-tags'
 Bundle 'pep8'
 
 filetype plugin indent on     " required!
-"
 
-if !exists("autocommands_loaded")
-  let autocommands_loaded = 1
-  autocmd bufread,BufNewFile,FileReadPost *.txt set spell
-endif
 
 " set spell in commit messages
 au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
@@ -68,6 +91,12 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 
+set scrolloff=8
+
+" backup stuff
+set backup
+set swapfile
+
 " searching using only lowercase ignores case
 set ignorecase
 set smartcase
@@ -75,7 +104,11 @@ set smartcase
 " instant search and keep search highlighted
 set incsearch
 set hlsearch
-nnoremap <cr> :noh<cr>
+
+" insert the very magic reg-ex mode every time
+nnoremap / /\v
+nnoremap ? ?\v
+nnoremap <leader><leader> :noh<cr>
 
 " plus and minus should be just that
 noremap - <C-x>
@@ -94,7 +127,7 @@ nmap d<c-k> d{
 vnoremap <c-j> }
 vnoremap <c-k> {
 
-" make paragraphs more consistent with words
+" make paragraphs more consistent with objects
 nmap di<c-j> dip
 nmap da<c-j> dap
 
@@ -104,17 +137,20 @@ nmap ya<c-j> yap
 nmap vi<c-j> vip
 nmap va<c-j> vap
 
-
 filetype plugin on
 
-" to select autocomplete results
+" to select autocomplete results with j/k
 inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
 inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
 " to yank to end of line
 map Y y$
 
-set scrolloff=8 
+" so that surrounds behaves more like a command
+map s ys
+
+" hide hidden files when browsing dir
+let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+"
 
 " http://codingfearlessly.com/2012/08/21/vim-putting-arrows-to-use/
 nmap <Up> ]<Space>
@@ -128,194 +164,44 @@ vmap <Right> >>
 vmap <Up> [egv
 vmap <Down> ]egv
 
+" Move between editor lines (instead of actual lines)
+vnoremap j gj
+vnoremap k gk
+vnoremap $ g$
+vnoremap ^ g^
+vnoremap 0 g0
+nnoremap j gj
+nnoremap k gk
+nnoremap $ g$
+nnoremap ^ g^
+nnoremap 0 g0
+
 " so that x and paste in vis doesn't update reg.
 noremap x "_x
 vnoremap p "_dP
 
-" to jump around more
+" to jump around more easily
 nnoremap <space> %
 
+" visual stuff
 hi CursorLine     guifg=Blue        guibg=Red     gui=NONE      ctermfg=NONE        ctermbg=234
 set cursorline
-colorscheme jellybeans 
-
+colorscheme jellybeans
 
 set guioptions-=r  " no scrollbar on the right
 set guioptions-=l  " no scrollbar on the left
 set guioptions-=m  " no menu
 set guioptions-=T  " no toolbar
 
-map <C-O> :exe "!wmctrl -r ".v:servername." -b toggle,fullscreen"
-
-
-" so that surrounds behaves more like a command
-map s ys
-
-
-" so that only yank writes to default buffer, c has its own
+" so that only yank writes to default buffer, c has its own buffer
 nnoremap c "cc
 vnoremap c "cc
 
-set backup
-set swapfile
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" FUNCTION STUFF
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"for gitgutter
-highlight clear SignColumn
-
-
-" Next and Last {{{
-
-" Motion for "next/last object". For example, "din(" would go to the next "()" pair
-" and delete its contents.
-
-onoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
-xnoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
-onoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
-xnoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
-
-onoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
-xnoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
-onoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
-xnoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
-
-function! s:NextTextObject(motion, dir)
-    let c = nr2char(getchar())
-    let d = ''
-
-    if c ==# "b" || c ==# "(" || c ==# ")"
-        let c = "("
-    elseif c ==# "B" || c ==# "{" || c ==# "}"
-        let c = "{"
-    elseif c ==# "r" || c ==# "[" || c ==# "]"
-        let c = "["
-    elseif c ==# "'"
-        let c = "'"
-    elseif c ==# '"'
-        let c = '"'
-    else
-        return
-    endif
-
-" Find the next opening-whatever.
-    execute "normal! " . a:dir . c . "\<cr>"
-
-    if a:motion ==# 'a'
-" If we're doing an 'around' method, we just need to select around it
-" and we can bail out to Vim.
-        execute "normal! va" . c
-    else
-" Otherwise we're looking at an 'inside' motion. Unfortunately these
-" get tricky when you're dealing with an empty set of delimiters because
-" Vim does the wrong thing when you say vi(.
-
-        let open = ''
-        let close = ''
-
-        if c ==# "("
-            let open = "("
-            let close = ")"
-        elseif c ==# "{"
-            let open = "{"
-            let close = "}"
-        elseif c ==# "["
-            let open = "\\["
-            let close = "\\]"
-        elseif c ==# "'"
-            let open = "'"
-            let close = "'"
-        elseif c ==# '"'
-            let open = '"'
-            let close = '"'
-        endif
-
-" We'll start at the current delimiter.
-        let start_pos = getpos('.')
-        let start_l = start_pos[1]
-        let start_c = start_pos[2]
-
-" Then we'll find it's matching end delimiter.
-        if c ==# "'" || c ==# '"'
-" searchpairpos() doesn't work for quotes, because fuck me.
-            let end_pos = searchpos(open)
-        else
-            let end_pos = searchpairpos(open, '', close)
-        endif
-
-        let end_l = end_pos[0]
-        let end_c = end_pos[1]
-
-        call setpos('.', start_pos)
-
-        if start_l == end_l && start_c == (end_c - 1)
-" We're in an empty set of delimiters. We'll append an "x"
-" character and select that so most Vim commands will do something
-" sane. v is gonna be weird, and so is y. Oh well.
-            execute "normal! ax\<esc>\<left>"
-            execute "normal! vi" . c
-        elseif start_l == end_l && start_c == (end_c - 2)
-" We're on a set of delimiters that contain a single, non-newline
-" character. We can just select that and we're done.
-            execute "normal! vi" . c
-        else
-" Otherwise these delimiters contain something. But we're still not
-" sure Vim's gonna work, because if they contain nothing but
-" newlines Vim still does the wrong thing. So we'll manually select
-" the guts ourselves.
-            let whichwrap = &whichwrap
-            set whichwrap+=h,l
-
-            execute "normal! va" . c . "hol"
-
-            let &whichwrap = whichwrap
-        endif
-    endif
-endfunction
-
-" }}}
-" }}}
-
-nnoremap <F7> :GundoToggle<CR>
-nmap <F8> :TagbarToggle<CR>
-
-" Autoformatjs stuff
-nnoremap <F6> :Tab/: <CR>
-autocmd FileType javascript noremap <buffer> \fk :call JsBeautify() <cr>
-nnoremap \fg :%g/"\([^\\"]\\|\\\(u\x\{4}\\|["trf\\bn\/]\)\)*"/:Tab/: <cr>
-nmap \fj \fk\fg``<cr>
-
-" if html ignore json stuff
-autocmd FileType html noremap <buffer> \fj :call HtmlBeautify()<cr>
-
-let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+" 
-
-" for ctrlp fuzzy search
-let g:ctrlp_map = '<c-f>'
-let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_extensions = ['tag']
-let g:ctrlp_working_path_mode = "rc"
-function! CreateTestString()
-
-    normal ma
-    normal ?defw"dyiw
-    normal ?classw"cyiw
-    normal 'a
-    return @% . ":" . @c  . "." . @d
-
-endfunction
-
-nmap <Space><Space>  :w\|!make test <CR>
-
-nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
-
-set laststatus=2
-let g:airline_theme='dark'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '◀'
-let g:airline_branch_prefix = '⎇ '
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" EXTRACT VARIABLE (SKETCHY)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" extract variable (sketchy)  (from gb)
 function! ExtractVariable()
     let name = input("Variable name: ")
     if name == ''
@@ -334,9 +220,7 @@ function! ExtractVariable()
 endfunction
 vnoremap <leader>e :call ExtractVariable()<cr>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" INLINE VARIABLE (SKETCHY)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" inline variable (sketchy)
 function! InlineVariable()
     " Copy the variable under the cursor into the 'a' register
     :let l:tmp_a = @a
@@ -360,3 +244,33 @@ function! InlineVariable()
     :let @b = l:tmp_b
 endfunction
 nnoremap <leader>i :call InlineVariable()<cr>
+
+
+" Start editing the vimrc in a new buffer
+nnoremap <leader>v :call Edit_vimrc()<CR>
+function! Edit_vimrc()
+    exe 'edit ' . '~/.vimrc'
+endfunction
+
+" toggle spell checking
+nnoremap <silent> <leader>s :set spell!<CR>
+
+" run test that i'm currently editing
+function! CreateTestString()
+
+    normal ma
+    normal ?defw"dyiw
+    normal ?classw"cyiw
+    normal 'a
+    return @% . ":" . @c  . "." . @d
+
+endfunction
+
+" auto format the file
+nnoremap <leader>8 :%! autopep8 - -a<cr>
+
+nmap <Space><Space>  :w\|!make test <CR>
+nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
+
+" for gitgutter
+highlight clear SignColumn
