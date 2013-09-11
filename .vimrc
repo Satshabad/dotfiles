@@ -7,6 +7,8 @@ call vundle#rc()
 " let Vundle manage Vundle
 " required!
 Bundle 'gmarik/vundle'
+
+Bundle 'py-coverage'
 Bundle 'chrisbra/NrrwRgn'
 vnoremap <leader>n :NarrowRegion<cr>
 
@@ -152,17 +154,10 @@ map s ys
 " hide hidden files when browsing dir
 let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+"
 
-" http://codingfearlessly.com/2012/08/21/vim-putting-arrows-to-use/
-nmap <Up> ]<Space>
-nmap <Down> [<Space>
-vmap <Up> [egv
-vmap <Down> ]egv
-nmap <Left> <<
-nmap <Right> >>
-vmap <Left> <<
-vmap <Right> >>
-vmap <Up> [egv
-vmap <Down> ]egv
+nmap <silent> <Up> :wincmd k<CR>
+nmap <silent> <Down> :wincmd j<CR>
+nmap <silent> <Left> :wincmd h<CR>
+nmap <silent> <Right> :wincmd l<CR>
 
 " Move between editor lines (instead of actual lines)
 vnoremap j gj
@@ -267,7 +262,7 @@ function! CreateTestString()
 endfunction
 
 " auto format the file
-nnoremap <leader>8 :%! autopep8 - -a<cr>
+vnoremap <leader>8 :! autopep8 - -a<cr>
 
 nmap <Space><Space>  :w\|!make test <CR>
 nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
