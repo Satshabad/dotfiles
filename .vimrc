@@ -68,7 +68,6 @@ nnoremap <F5> :Tagbar<CR>
 " vim-scripts repos
 Bundle 'YankRing.vim'
 Bundle 'vim-tags'
-Bundle 'pep8'
 
 filetype plugin indent on     " required!
 
@@ -254,8 +253,10 @@ nnoremap <silent> <leader>s :set spell!<CR>
 function! CreateTestString()
 
     normal ma
-    normal ?defw"dyiw
-    normal ?classw"cyiw
+    normal ?def
+w"dyiw
+    normal ?class
+w"cyiw
     normal 'a
     return @% . ":" . @c  . "." . @d
 
