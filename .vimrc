@@ -7,6 +7,8 @@ call vundle#rc()
 " let Vundle manage Vundle
 " required!
 Bundle 'gmarik/vundle'
+
+Bundle 'py-coverage'
 Bundle 'chrisbra/NrrwRgn'
 vnoremap <leader>n :NarrowRegion<cr>
 
@@ -65,7 +67,6 @@ nnoremap <F5> :Tagbar<CR>
 " vim-scripts repos
 Bundle 'YankRing.vim'
 Bundle 'vim-tags'
-Bundle 'pep8'
 
 filetype plugin indent on     " required!
 
@@ -150,17 +151,10 @@ map s ys
 " hide hidden files when browsing dir
 let g:netrw_list_hide="\\(^\\|\\s\\s\\)\\zs\\.\\S\\+"
 
-" http://codingfearlessly.com/2012/08/21/vim-putting-arrows-to-use/
-nmap <Up> ]<Space>
-nmap <Down> [<Space>
-vmap <Up> [egv
-vmap <Down> ]egv
-nmap <Left> <<
-nmap <Right> >>
-vmap <Left> <<
-vmap <Right> >>
-vmap <Up> [egv
-vmap <Down> ]egv
+nmap <silent> <Up> :wincmd k<CR>
+nmap <silent> <Down> :wincmd j<CR>
+nmap <silent> <Left> :wincmd h<CR>
+nmap <silent> <Right> :wincmd l<CR>
 
 " Move between editor lines (instead of actual lines)
 vnoremap j gj
@@ -257,8 +251,10 @@ nnoremap <silent> <leader>s :set spell!<CR>
 function! CreateTestString()
 
     normal ma
-    normal ?defw"dyiw
-    normal ?classw"cyiw
+    normal ?def
+w"dyiw
+    normal ?class
+w"cyiw
     normal 'a
     return @% . ":" . @c  . "." . @d
 
