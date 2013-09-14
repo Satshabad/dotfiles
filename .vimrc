@@ -42,7 +42,6 @@ nnoremap <F7> :GundoToggle<CR>
 Bundle 'kien/ctrlp.vim'
 let g:ctrlp_map = '<c-f>'
 let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_extensions = ['tag']
 let g:ctrlp_working_path_mode = "rc"
 
 Bundle 'garbas/vim-snipmate'
@@ -94,7 +93,6 @@ set expandtab
 set scrolloff=8
 
 " backup stuff
-set backup
 set swapfile
 
 " searching using only lowercase ignores case
@@ -267,7 +265,7 @@ function! CreateTestString()
 endfunction
 
 " auto format the file
-nnoremap <leader>8 :%! autopep8 - -a<cr>
+vnoremap <leader>8 :! autopep8 - -a<cr>
 
 nmap <Space><Space>  :w\|!make test <CR>
 nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
