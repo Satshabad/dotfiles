@@ -8,11 +8,9 @@ call vundle#rc()
 " required!
 Bundle 'gmarik/vundle'
 
-Bundle 'py-coverage'
 Bundle 'chrisbra/NrrwRgn'
 vnoremap <leader>n :NarrowRegion<cr>
 
-Bundle 'nvie/vim-flake8'
 autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
 Bundle 'bitc/vim-bad-whitespace'
 
@@ -66,7 +64,6 @@ Bundle 'majutsushi/tagbar'
 nnoremap <F5> :Tagbar<CR>
 
 " vim-scripts repos
-Bundle 'YankRing.vim'
 Bundle 'vim-tags'
 
 filetype plugin indent on     " required!
@@ -93,10 +90,6 @@ set softtabstop=4
 set expandtab
 
 set scrolloff=8
-
-" backup stuff
-set backup
-set swapfile
 
 " searching using only lowercase ignores case
 set ignorecase
