@@ -57,7 +57,6 @@ autocmd FileType html noremap <buffer> \fj :call HtmlBeautify()<cr>
 
 Bundle 'airblade/vim-gitgutter'
 
-Bundle 'Floobits/floobits-vim'
 Bundle 'Townk/vim-autoclose'
 
 Bundle 'majutsushi/tagbar'
