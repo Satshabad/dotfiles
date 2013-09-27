@@ -8,7 +8,6 @@ call vundle#rc()
 " required!
 Bundle 'gmarik/vundle'
 
-Bundle 'py-coverage'
 Bundle 'chrisbra/NrrwRgn'
 vnoremap <leader>n :NarrowRegion<cr>
 
@@ -64,6 +63,11 @@ Bundle 'Townk/vim-autoclose'
 Bundle 'majutsushi/tagbar'
 nnoremap <F5> :Tagbar<CR>
 
+Bundle 'maxbrunsfeld/vim-yankstack'
+nmap <C-p> <Plug>yankstack_substitute_older_paste
+nmap <C-l> <Plug>yankstack_substitute_newer_paste
+call yankstack#setup()
+
 " vim-scripts repos
 Bundle 'YankRing.vim'
 Bundle 'vim-tags'
@@ -93,8 +97,6 @@ set expandtab
 
 set scrolloff=8
 
-" backup stuff
-set swapfile
 
 " searching using only lowercase ignores case
 set ignorecase
@@ -143,7 +145,7 @@ inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
 inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
 
 " to yank to end of line
-map Y y$
+noremap Y y$
 
 " so that surrounds behaves more like a command
 map s ys
