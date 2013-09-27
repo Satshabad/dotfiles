@@ -11,7 +11,6 @@ Bundle 'gmarik/vundle'
 Bundle 'chrisbra/NrrwRgn'
 vnoremap <leader>n :NarrowRegion<cr>
 
-Bundle 'nvie/vim-flake8'
 autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
 Bundle 'bitc/vim-bad-whitespace'
 
@@ -57,7 +56,6 @@ autocmd FileType html noremap <buffer> \fj :call HtmlBeautify()<cr>
 
 Bundle 'airblade/vim-gitgutter'
 
-Bundle 'Floobits/floobits-vim'
 Bundle 'Townk/vim-autoclose'
 
 Bundle 'majutsushi/tagbar'
@@ -69,7 +67,6 @@ nmap <C-l> <Plug>yankstack_substitute_newer_paste
 call yankstack#setup()
 
 " vim-scripts repos
-Bundle 'YankRing.vim'
 Bundle 'vim-tags'
 
 filetype plugin indent on     " required!
@@ -96,7 +93,6 @@ set softtabstop=4
 set expandtab
 
 set scrolloff=8
-
 
 " searching using only lowercase ignores case
 set ignorecase
