@@ -16,7 +16,6 @@ Bundle 'bitc/vim-bad-whitespace'
 
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-unimpaired'
-Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-commentary'
 
@@ -66,16 +65,36 @@ nmap <C-p> <Plug>yankstack_substitute_older_paste
 nmap <C-l> <Plug>yankstack_substitute_newer_paste
 call yankstack#setup()
 
+" lisp plugins
+Bundle 'tpope/vim-fireplace'
+Bundle 'tpope/vim-classpath'
+Bundle 'guns/vim-clojure-static'
+let g:clojure_align_multiline_strings = 1
+
+Bundle 'terryma/vim-expand-region'
+map <C-e> <Plug>(expand_region_expand)
+map <C-d> <Plug>(expand_region_shrink)
+
+"rainbow parens
+Bundle 'amdt/vim-niji'
+
+Bundle 'Valloric/YouCompleteMe'
+
 " vim-scripts repos
 Bundle 'vim-tags'
+Bundle 'paredit.vim'
+Bundle 'tpope/vim-surround'
 
+syntax on
 filetype plugin indent on     " required!
-
 
 " set spell in commit messages
 au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
 
 set clipboard=unnamedplus
+
+" remove trailing whitespace for clj files
+autocmd BufWritePre *.clj :%s/\s\+$//e
 
 " better indent
 set smartindent
@@ -136,9 +155,10 @@ nmap va<c-j> vap
 
 filetype plugin on
 
-" to select autocomplete results with j/k
+" " to select autocomplete results with j/k
 inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
 inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
+set complete-=i
 
 " to yank to end of line
 noremap Y y$
@@ -171,7 +191,8 @@ noremap x "_x
 vnoremap p "_dP
 
 " to jump around more easily
-nnoremap <space> %
+nmap <space> %
+vmap <space> %
 
 " visual stuff
 hi CursorLine     guifg=Blue        guibg=Red     gui=NONE      ctermfg=NONE        ctermbg=234
@@ -261,8 +282,8 @@ endfunction
 " auto format the file
 vnoremap <leader>8 :! autopep8 - -a<cr>
 
-nmap <Space><Space>  :w\|!make test <CR>
-nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
+" nmap <Space><Space>  :w\|!make test <CR>
+" nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
 
 " for gitgutter
 highlight clear SignColumn
