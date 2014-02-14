@@ -78,8 +78,6 @@ map <C-d> <Plug>(expand_region_shrink)
 "rainbow parens
 Bundle 'amdt/vim-niji'
 
-Bundle 'Valloric/YouCompleteMe'
-
 " vim-scripts repos
 Bundle 'vim-tags'
 Bundle 'paredit.vim'
