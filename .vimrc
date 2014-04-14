@@ -60,23 +60,32 @@ Bundle 'Townk/vim-autoclose'
 Bundle 'majutsushi/tagbar'
 nnoremap <F5> :Tagbar<CR>
 
-Bundle 'maxbrunsfeld/vim-yankstack'
-nmap <C-p> <Plug>yankstack_substitute_older_paste
-nmap <C-l> <Plug>yankstack_substitute_newer_paste
-call yankstack#setup()
+Bundle "YankRing.vim"
+let g:yankring_replace_n_nkey = '<C-L>'
+
+" Bundle 'maxbrunsfeld/vim-yankstack'
+" nmap <C-p> <Plug>yankstack_substitute_older_paste
+" nmap <C-l> <Plug>yankstack_substitute_newer_paste
+" call yankstack#setup()
 
 " lisp plugins
 Bundle 'tpope/vim-fireplace'
 Bundle 'tpope/vim-classpath'
 Bundle 'guns/vim-clojure-static'
+Bundle 'guns/vim-clojure-highlight'
 let g:clojure_align_multiline_strings = 1
+Bundle 'fwolanski/vim-clojure-conceal'
+nmap cpP :Eval <CR>
 
 Bundle 'terryma/vim-expand-region'
 map <C-e> <Plug>(expand_region_expand)
 map <C-d> <Plug>(expand_region_shrink)
 
-"rainbow parens
-Bundle 'amdt/vim-niji'
+Bundle 'jpalardy/vim-slime'
+let g:slime_target = "tmux"
+
+Bundle 'luochen1990/rainbow'
+let g:rainbow_active = 1
 
 " vim-scripts repos
 Bundle 'vim-tags'
@@ -102,6 +111,7 @@ set number
 
 " for faster redrawing
 set ttyfast
+set lazyredraw
 
 " fix tabs
 set tabstop=4
