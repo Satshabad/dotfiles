@@ -1,25 +1,63 @@
 set nocompatible               " be iMproved
-filetype off                   " required!
+filetype off                   " required
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" let Vundle manage Vundle
-" required!
-Bundle 'gmarik/vundle'
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
 
-Bundle 'chrisbra/NrrwRgn'
-vnoremap <leader>n :NarrowRegion<cr>
+Plugin 'bitc/vim-bad-whitespace'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-commentary'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'ervandew/supertab'
+Plugin 'Vimjas/vim-python-pep8-indent'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'Townk/vim-autoclose'
+Plugin 'tpope/vim-surround'
+Plugin 'vim-tags'
+Plugin 'junegunn/vim-peekaboo'
+Plugin 'alvan/vim-closetag'
 
-autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
-Bundle 'bitc/vim-bad-whitespace'
 
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-commentary'
+Plugin 'vim-syntastic/syntastic' " Install flake8
+let g:syntastic_python_checkers = ['flake8']
 
-Bundle 'bling/vim-airline'
+Plugin 'elzr/vim-json'
+nmap <leader>jq :%!jq "."<CR><CR>
+
+" lisp plugins
+Plugin 'paredit.vim'
+Plugin 'tpope/vim-fireplace'
+Plugin 'tpope/vim-classpath'
+Plugin 'guns/vim-clojure-static'
+Plugin 'guns/vim-clojure-highlight'
+let g:clojure_align_multiline_strings = 1
+Plugin 'fwolanski/vim-clojure-conceal'
+nmap cpP :Eval <CR>
+Bundle 'luochen1990/rainbow'
+let g:rainbow_active = 1
+
+Bundle 'terryma/vim-expand-region'
+map <C-e> <Plug>(expand_region_expand)
+map <C-d> <Plug>(expand_region_shrink)
+
+Plugin 'mbbill/undotree'
+nnoremap <leader>u :UndotreeToggle<CR>
+let g:undotree_SetFocusWhenToggle = 1
+
+set undodir=~/.undodir/
+set undofile
+
+Plugin 'kien/ctrlp.vim'
+let g:ctrlp_map = '<c-f>'
+let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_working_path_mode = "rc"
+
+Plugin 'bling/vim-airline'
 set laststatus=2
 let g:airline_theme='dark'
 let g:airline_left_sep = '▶'
@@ -28,84 +66,48 @@ let g:airline_branch_prefix = '⎇ '
 let g:airline_section_y = ""
 let g:airline_section_x = ""
 
-Bundle 'rking/ag.vim'
-Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'tomtom/tlib_vim'
-Bundle 'godlygeek/tabular'
-Bundle 'terryma/vim-multiple-cursors'
-Bundle 'ervandew/supertab'
+Plugin 'mileszs/ack.vim'
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
 
-Bundle 'sjl/gundo.vim'
-nnoremap <F7> :GundoToggle<CR>
+" Trailing space is significant
+nnoremap <leader>a :Ack 
 
-Bundle 'kien/ctrlp.vim'
-let g:ctrlp_map = '<c-f>'
-let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_working_path_mode = "rc"
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+" two spaces for some reason
+autocmd FileType python setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
-Bundle 'garbas/vim-snipmate'
-Bundle 'hynek/vim-python-pep8-indent'
+function! UndoIfShellError()
+    if v:shell_error
+        undo
+    endif
+endfunc
 
-Bundle 'maksimr/vim-jsbeautify'
-nnoremap <F6> :Tab/: <CR>
-autocmd FileType javascript noremap <buffer> \fk :call JsBeautify() <cr>
-nnoremap \fg :%g/"\([^\\"]\\|\\\(u\x\{4}\\|["trf\\bn\/]\)\)*"/:Tab/: <cr>
-nmap \fj \fk\fg``<cr>
-autocmd FileType html noremap <buffer> \fj :call HtmlBeautify()<cr>
+" Format the file and save the position of the cursor
+function! SafeFormat()
+    let s:pos = getpos( '. ')
+    let s:view = winsaveview()
+    0,$!yapf
+    call UndoIfShellError()
+    call setpos( '.', s:pos )
+    call winrestview( s:view )
+endfunc
 
-Bundle 'airblade/vim-gitgutter'
-
-Bundle 'Townk/vim-autoclose'
-
-Bundle 'majutsushi/tagbar'
-nnoremap <F5> :Tagbar<CR>
-
-Bundle "YankRing.vim"
-let g:yankring_replace_n_nkey = '<C-L>'
-
-" Bundle 'maxbrunsfeld/vim-yankstack'
-" nmap <C-p> <Plug>yankstack_substitute_older_paste
-" nmap <C-l> <Plug>yankstack_substitute_newer_paste
-" call yankstack#setup()
-
-" lisp plugins
-Bundle 'tpope/vim-fireplace'
-Bundle 'tpope/vim-classpath'
-Bundle 'guns/vim-clojure-static'
-Bundle 'guns/vim-clojure-highlight'
-let g:clojure_align_multiline_strings = 1
-Bundle 'fwolanski/vim-clojure-conceal'
-nmap cpP :Eval <CR>
-
-Bundle 'terryma/vim-expand-region'
-map <C-e> <Plug>(expand_region_expand)
-map <C-d> <Plug>(expand_region_shrink)
-
-Bundle 'jpalardy/vim-slime'
-let g:slime_target = "tmux"
-
-Bundle 'luochen1990/rainbow'
-let g:rainbow_active = 1
-
-" vim-scripts repos
-Bundle 'vim-tags'
-Bundle 'paredit.vim'
-Bundle 'tpope/vim-surround'
-
-syntax on
-filetype plugin indent on     " required!
+" Auto format python
+"
+autocmd BufWritePre *.py :call SafeFormat()
+filetype plugin indent on    " required
 
 " set spell in commit messages
 au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
 
+" make sure you have vim-gtk
 set clipboard=unnamedplus
 
 " remove trailing whitespace for clj files
 autocmd BufWritePre *.clj :%s/\s\+$//e
-
-" better indent
-set smartindent
-set autoindent
 
 set number
 
@@ -161,7 +163,6 @@ nmap ya<c-j> yap
 nmap vi<c-j> vip
 nmap va<c-j> vap
 
-filetype plugin on
 
 " " to select autocomplete results with j/k
 inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
@@ -196,7 +197,7 @@ nnoremap 0 g0
 
 " so that x and paste in vis doesn't update reg.
 noremap x "_x
-vnoremap p "_dP
+vnoremap p "_xP
 
 " to jump around more easily
 nmap <space> %
@@ -216,55 +217,6 @@ set guioptions-=T  " no toolbar
 nnoremap c "cc
 vnoremap c "cc
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" FUNCTION STUFF
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" extract variable (sketchy)  (from gb)
-function! ExtractVariable()
-    let name = input("Variable name: ")
-    if name == ''
-        return
-    endif
-    " Enter visual mode (not sure why this is needed since we're already in
-    " visual mode anyway)
-    normal! gv
-
-    " Replace selected text with the variable name
-    exec "normal c" . name
-    " Define the variable on the line above
-    exec "normal! O" . name . " = "
-    " Paste the original selected text to be the variable value
-    normal! $p
-endfunction
-vnoremap <leader>e :call ExtractVariable()<cr>
-
-" inline variable (sketchy)
-function! InlineVariable()
-    " Copy the variable under the cursor into the 'a' register
-    :let l:tmp_a = @a
-    :normal "ayiw
-    " Delete variable and equals sign
-    :normal 2daW
-    " Delete the expression into the 'b' register
-    :let l:tmp_b = @b
-    :normal "bd$
-    " Delete the remnants of the line
-    :normal dd
-    " Go to the end of the previous line so we can start our search for the
-    " usage of the variable to replace. Doing '0' instead of 'k$' doesn't
-    " work; I'm not sure why.
-    normal k$
-    " Find the next occurence of the variable
-    exec '/\<' . @a . '\>'
-    " Replace that occurence with the text we yanked
-    exec ':.s/\<' . @a . '\>/' . @b
-    :let @a = l:tmp_a
-    :let @b = l:tmp_b
-endfunction
-nnoremap <leader>i :call InlineVariable()<cr>
-
-
 " Start editing the vimrc in a new buffer
 nnoremap <leader>v :call Edit_vimrc()<CR>
 function! Edit_vimrc()
@@ -274,24 +226,17 @@ endfunction
 " toggle spell checking
 nnoremap <silent> <leader>s :set spell!<CR>
 
-" run test that i'm currently editing
-function! CreateTestString()
-
-    normal ma
-    normal ?def
-w"dyiw
-    normal ?class
-w"cyiw
-    normal 'a
-    return @% . ":" . @c  . "." . @d
-
-endfunction
-
 " auto format the file
 vnoremap <leader>8 :! autopep8 - -a<cr>
 
-" nmap <Space><Space>  :w\|!make test <CR>
-" nmap s<Space>  :execute ' :w\|!make test SINGLETEST="' .  CreateTestString() . '"' <CR>
-
 " for gitgutter
 highlight clear SignColumn
+
+" Close all tabs but this one
+nmap <C-Enter> :only<CR>
+
+" Disable Q and the dreaded Ex mode.
+nnoremap Q <nop>
+
+" so that dash-case words are words not WORDS
+set iskeyword+='-'
