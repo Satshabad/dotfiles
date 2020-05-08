@@ -1,28 +1,64 @@
 set nocompatible               " be iMproved
 filetype off                   " required
-
+" Point YCM to the Pipenv created virtualenv, if possible
+" At first, get the output of 'pipenv --venv' command.
+let pipenv_venv_path = system('pipenv --venv')
+" The above system() call produces a non zero exit code whenever
+" a proper virtual environment has not been found.
+" So, second, we only point YCM to the virtual environment when
+" the call to 'pipenv --venv' was successful.
+" Remember, that 'pipenv --venv' only points to the root directory
+" of the virtual environment, so we have to append a full path to
+" the python executable.
+if v:shell_error == 0
+  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
+  let g:ycm_python_binary_path = venv_path . '/bin/python'
+  let isort_path = venv_path . '/bin/isort'
+else
+  let g:ycm_python_binary_path = 'python'
+  let isort_path = 'isort'
+endif
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
+
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
-
+" Plugin 'airblade/vim-rooter'
 Plugin 'bitc/vim-bad-whitespace'
 Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-unimpaired'
+Plugin 'christoomey/vim-conflicted'
+set stl+=%{ConflictedVersion()}
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-commentary'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'Vimjas/vim-python-pep8-indent'
 Plugin 'airblade/vim-gitgutter'
+nmap <leader>f :GitGutterFold<CR>
 Plugin 'junegunn/vim-peekaboo'
 Plugin 'alvan/vim-closetag'
 Plugin 'tpope/vim-sleuth'
 Plugin 'wincent/terminus'
 Plugin 'tmhedberg/SimpylFold'
+nmap zm zM
 Plugin 'majutsushi/tagbar'
 Plugin 'jparise/vim-graphql'
 Plugin 'peitalin/vim-jsx-typescript'
+Plugin 'janko/vim-test'
+let test#python#pytest#executable = 'pipenv run python -m pytest'
+nmap <leader>t :TestNearest<CR>
+Plugin 'mgedmin/python-imports.vim'
+map <leader>i    :ImportName<CR>
+Plugin 'tpope/vim-unimpaired'
+" So annoying that if there's a single error you gotta use :cfirst, and that
+" it don't loop by default
+command! Lnext try | lnext | catch | lfirst | catch | endtry
+nmap <leader>l :Lnext<CR>
+
+
+
+
+
 Plugin 'ludovicchabant/vim-gutentags'
 
 let g:gutentags_ctags_exclude = ["node_modules"]
@@ -43,26 +79,8 @@ Plugin 'tpope/vim-surround'
 Plugin 'Konfekt/FastFold'
 set foldlevelstart=99
 
-Plugin 'Townk/vim-autoclose'
-let g:AutoClosePumvisible = {"ENTER": "<C-Y>", "ESC": "<ESC>"}
-
-Plugin 'ervandew/supertab'
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabContextDefaultCompletionType = "<c-n>"
-
 Plugin 'MilesCranmer/gso'
 nnoremap <C-s> :GSO
-
-Plugin 'vim-syntastic/syntastic' " Install flake8
-let g:syntastic_python_checkers = ['flake8']
-let g:syntastic_html_checkers=['tidy']
-" Couldn't get this working
-" let g:syntastic_htmldjango_checkers = ['html/tidy']
-" let g:syntastic_html_tidy_args="--show-body-only yes --quiet yes -i=2 -w 80"
-" let g:syntastic_htmldjango_tidy_args="--show-body-only yes --quiet yes -i=2 -w 80"
-" let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute " ,"trimming empty <", "unescaped &" , "lacks \"action", "is not recognized!", "discarding unexpected"]
-let g:syntastic_quiet_messages = { 'regex': 'W504'}
-let g:syntastic_always_populate_loc_list = 1
 
 Plugin 'elzr/vim-json'
 nmap <leader>jq :%!jq "."<CR><CR>
@@ -114,47 +132,142 @@ call yankstack#setup()
 
 call plug#begin()
 
+Plug 'jceb/vim-orgmode'
+
 Plug 'junegunn/vim-easy-align'
 xmap ga <Plug>(EasyAlign)
 
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue PrettierAsync
+
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+let g:mkdp_auto_start = 1
+
 Plug 'sbdchd/neoformat'
-let g:neoformat_enabled_python = ['yapf']
-let g:neoformat_try_formatprg = 1
+let g:neoformat_python_docformatter = {
+            \ 'exe': '/home/satshabad/.pyenv/versions/neovim3.7.2/bin/docformatter',
+            \ 'args': ['-', '--wrap-summaries 88', '--wrap-descriptions 88'],
+            \ 'stdin': 1,
+            \ }
 
-augroup fmt
-  autocmd!
-  autocmd BufWritePre *.py undojoin | Neoformat
-augroup END
+let g:neoformat_python_isort = {
+            \ 'exe': isort_path,
+            \ 'args': ['-', '-m 3', '--trailing-comma', '-fgw 0', '-up', '-l 88', '--quiet'],
+            \ 'stdin': 1,
+            \ }
 
-if has('nvim')
-  Plug 'HerringtonDarkholme/yats.vim'
-  Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-let g:deoplete#enable_at_startup = 1
-let g:nvim_typescript#default_mappings = 1
+let g:neoformat_enabled_python = ['isort', 'docformatter']
+let g:neoformat_run_all_formatters = 1
 
-Plug 'zchee/deoplete-jedi'
+command! -bang -nargs=* Neo try | undojoin | Neoformat | catch /^Vim\%((\a\+)\)\=:E790/ | finally | silent Neoformat | endtry
+nnoremap <leader>n :Neo<CR>
 
-augroup omnifuncs
-  autocmd!
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-augroup end
+set completeopt-=preview
+
+Plug 'ncm2/ncm2'
+Plug 'ncm2/float-preview.nvim'
+let g:float_preview#docked = 0
+
 
 Plug 'Shougo/echodoc.vim'
 let g:echodoc#enable_at_startup = 1
 
-Plug 'iberianpig/tig-explorer.vim'
 Plug 'rbgrouleff/bclose.vim'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-nnoremap <leader>a :Ag<CR>
+
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" navigate diagnostics
+nmap <silent> <space>j <Plug>(coc-diagnostic-next)
+" navigate diagnostics
+nmap <silent> <space>k <Plug>(coc-diagnostic-prev)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Remap keys for applying codeAction to the current line.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+set signcolumn=yes
+
+" Mappings using CoCList:
+" Show all diagnostics.
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" Resume latest coc list.
+nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+
+
+Plug 'dense-analysis/ale'
+
+function! s:with_git_root()
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  return v:shell_error ? {} : {'dir': root}
+endfunction
+
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, extend(s:with_git_root(), {'options': '--delimiter : --nth 4..'}), <bang>0)
+nnoremap <leader>ga :Ag<CR>
+
+nnoremap <silent> <Leader>gwa :Ag <C-R><C-W><CR>
+
 let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+let g:fzf_buffers_jump = 1
 
 " So that you can cycle through the commands
 function! s:fzf_next(idx)
@@ -164,50 +277,49 @@ function! s:fzf_next(idx)
   execute 'tnoremap <buffer> <silent> <c-f> <c-\><c-n>:close<cr>:sleep 100m<cr>:call <sid>fzf_next('.next.')<cr>'
 endfunction
 
+" So that you always search from root
+function! s:find_root()
+  for vcs in ['.git', '.svn', '.hg']
+    let dir = finddir(vcs.'/..', ';')
+    if !empty(dir)
+      execute 'FZF' dir
+      return
+    endif
+  endfor
+  FZF
+endfunction
+
+command! Files call s:find_root()
+
 command! Cycle call <sid>fzf_next(0)
 nmap <C-f> :Cycle <CR>
 
 
-" open tig with current file
-nnoremap <Leader>T :TigOpenCurrentFile<CR>
-
-" open tig with Project root path
-nnoremap <Leader>t :TigOpenProjectRootDir<CR>
-
 call plug#end()
+let g:ale_python_mypy_auto_pipenv = 1
+let g:ale_python_black_executable = '/home/satshabad/.pyenv/versions/neovim3.7.2/bin/black'
+let g:ale_python_flake8_executable = '/home/satshabad/.pyenv/versions/neovim3.7.2/bin/flake8'
+let g:ale_python_isort_executable = isort_path
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_sign_error = '>>'
+let g:airline#extensions#ale#enabled = 1
+let g:ale_linters = {
+\   'python': ['flake8', 'mypy'],
+\}
 
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['black', 'isort'],
+\}
+let g:ale_fix_on_save = 1
 
-" two spaces for some reason
-autocmd FileType python setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
-
-function! UndoIfShellError()
-    if v:shell_error
-        undo
-    endif
-endfunc
-
-" Format the file and save the position of the cursor
-function! SafeFormat()
-    let s:pos = getpos( '. ')
-    let s:view = winsaveview()
-    0,$!yapf
-    call UndoIfShellError()
-    call setpos( '.', s:pos )
-    call winrestview( s:view )
-endfunc
-
-" Auto format python
-"
-" autocmd BufWritePre *.py :call SafeFormat()
-filetype plugin indent on    " required
 
 " set spell in commit messages
 au BufNewFile,BufRead COMMIT_EDITMSG setlocal spell
 
 set clipboard+=unnamedplus
-
-" remove trailing whitespace for clj files
-autocmd BufWritePre *.clj :%s/\s\+$//e
 
 set number
 
@@ -231,9 +343,6 @@ set smartcase
 set incsearch
 set hlsearch
 
-" insert the very magic reg-ex mode every time
-nnoremap / /\v
-nnoremap ? ?\v
 nnoremap <leader><leader> :noh<cr>
 
 " plus and minus should be just that
@@ -264,18 +373,10 @@ nmap vi<c-j> vip
 nmap va<c-j> vap
 
 
-" to select autocomplete results with j/k
-" NOTE: this gets bothersome
-" inoremap <expr> j ((pumvisible())?("\<C-n>"):("j"))
-" inoremap <expr> k ((pumvisible())?("\<C-p>"):("k"))
-
 " Enter to select from menu
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 set cmdheight=2
-
-set complete-=i
-set completeopt-=preview
 
 " to yank to end of line
 noremap Y y$
@@ -343,11 +444,13 @@ function! Edit_zshrc()
     exe 'edit ' . '~/.zshrc'
 endfunction
 
+nnoremap tt :call Edit_todo()<CR>
+function! Edit_todo()
+    exe 'edit ' . '~/todo.org'
+endfunction
+
 " toggle spell checking
 nnoremap <silent> <leader>s :set spell!<CR>
-
-" auto format the file
-vnoremap <leader>8 :! autopep8 - -a<cr>
 
 " for gitgutter
 highlight clear SignColumn
@@ -369,3 +472,17 @@ endif
 
 " find/replace in a visually selected block
 vmap <leader>r :s/\%V
+
+" When using `dd` in the quickfix list, remove the item from the quickfix list.
+function! RemoveQFItem()
+  let curqfidx = line('.') - 1
+  let qfall = getqflist()
+  call remove(qfall, curqfidx)
+  call setqflist(qfall, 'r')
+  execute curqfidx + 1 . "cfirst"
+  :copen
+endfunction
+:command! RemoveQFItem :call RemoveQFItem()
+" Use map <buffer> to only map dd in the quickfix window. Requires +localmap
+autocmd FileType qf map <buffer> dd :RemoveQFItem<cr>
+
